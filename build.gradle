@@ -1,0 +1,56 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenRepo(urls: 'http://jvoegele.com/maven2/')
+  }
+  dependencies {
+    classpath 'com.jvoegele.gradle.plugins:android-plugin:1.0.0-SNAPSHOT'
+  }
+}
+apply plugin: 'android'
+apply plugin: 'eclipse'
+repositories {
+    mavenCentral()
+    mavenRepo(urls: 'http://maven2.langhua.org/public/')
+}
+dependencies {
+    compile 'com.google.zxing:zxing-core:1.6'
+    compile 'com.google.code.gson:gson:1.7.1'
+    compile 'org.slf4j:slf4j-api:1.6.1'
+}
+// Sets the package version
+version = "0.0.4-SNAPSHOT"
+devLabelSuffix = "Dev"
+// Signing configuration, valid for all builds (1)
+//androidPackage {
+//	keyStore = "path/to/my/keystore"
+//	keyAlias = "my-key-alias"
+//	keyStorePassword = "mystorepass"
+//	keyAliasPassword = "myaliaspass"
+//}
+sourceSets {
+  main {
+    java {
+      srcDir 'src/bitcoinj/java'
+    }
+  }
+}
+// Configure the filtering of resources with properties from the Gradle's project scope (2)
+processResources {
+	expand (project.properties)
+}
+// Configure a dedicated debug build (3)
+task configureDebug << {
+    jar.classifier = "debug"
+}
+// Enable proguard
+task configureProguard << {
+    proguardOptions['configuration'] = new File(project.rootDir, "proguard.cfg")
+    proguard.enabled = true
+}
+// Configure build for release to market
+task configureRelease << {
+    //proguard cannot currently be properly configured
+    //proguard.enabled = true
+    devLabelSuffix = ""
+}
